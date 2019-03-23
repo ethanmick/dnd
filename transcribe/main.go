@@ -4,6 +4,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -21,28 +22,35 @@ func main() {
 		log.Fatalf("Failed to create client: %v", err)
 	}
 
-	// Sets the name of the audio file to transcribe.
-	filename := "/path/to/audio.raw"
+	uri := "gs://audio-ethanmick-dnd/session-1a.flac"
 
-	// Reads the audio file into memory.
-	data, err := ioutil.ReadFile(filename)
-	if err != nil {
-		log.Fatalf("Failed to read file: %v", err)
-	}
-
-	// Detects speech in the audio file.
-	resp, err := client.Recognize(ctx, &speechpb.RecognizeRequest{
+	// Send the contents of the audio file with the encoding and
+	// and sample rate information to be transcripted.
+	req := &speechpb.LongRunningRecognizeRequest{
 		Config: &speechpb.RecognitionConfig{
-			Encoding:        speechpb.RecognitionConfig_LINEAR16,
-			SampleRateHertz: 16000,
+			Encoding:        speechpb.RecognitionConfig_FLAC,
+			SampleRateHertz: 48000,
 			LanguageCode:    "en-US",
 		},
 		Audio: &speechpb.RecognitionAudio{
-			AudioSource: &speechpb.RecognitionAudio_Content{Content: data},
+			AudioSource: &speechpb.RecognitionAudio_Uri{Uri: uri},
 		},
-	})
+	}
+
+	op, err := client.LongRunningRecognize(ctx, req)
+	if err != nil {
+		log.Fatalf("error starting request: %v", err)
+	}
+	resp, err := op.Wait(ctx)
 	if err != nil {
 		log.Fatalf("failed to recognize: %v", err)
+	}
+
+	// save to file
+	toSave, _ := json.Marshal(resp.Results)
+	err = ioutil.WriteFile("audio.json", toSave, 0644)
+	if err != nil {
+		log.Fatalf("failed to save file: %v", err)
 	}
 
 	// Prints the results.

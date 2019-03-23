@@ -12,3 +12,5 @@
 *.out
 
 credentials.json
+audio
+audio.json
