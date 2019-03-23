@@ -1,2 +1,12 @@
 const withTypescript = require('@zeit/next-typescript')
-module.exports = withTypescript()
+
+const withMDX = require('@zeit/next-mdx')({
+  extension: /\.mdx?$/,
+  options: {}
+})
+
+module.exports = withTypescript(
+  withMDX({
+    pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx']
+  })
+)
