@@ -1,9 +1,20 @@
 import { Chapter } from '../../components/Chapter'
+import { Layout } from '../../components/Layout'
 import { Dice } from '../../components/Dice'
 
 It was a dark and story night. Our intrepid heros have spent 5 long weeks on a
+It was a dark and story night. Our intrepid heros have spent 5 long weeks on a
+It was a dark and story night. Our intrepid heros have spent 5 long weeks on a
+It was a dark and story night. Our intrepid heros have spent 5 long weeks on a
 ship, only now to feel close to land.
+It was a dark and story night. Our intrepid heros have spent 5 long weeks on a
 
 We needd a line break at character 80<Dice />, and als ot fix his fucking d key.
 
-export default ({ children }) => <Chapter meta={{title:"Landfall"}}>{children}</Chapter>
+export default ({ children }) => (
+  <Layout>
+    <Chapter meta={{title:"Landfall"}}>
+      {children}
+    </Chapter>
+  </Layout>
+)
